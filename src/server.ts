@@ -54,9 +54,14 @@ if (req.url=='/api/user' && req.method=="POST") {
 body+=chunk.toString();
     });
 req.on("end",()=>{
-    const parsBody=JSON.parse(body);
+  try {
+      const parsBody=JSON.parse(body);
     console.log(body);
     res.end(body)
+    
+  } catch (error:any) {
+    console.log(error?.message);
+  }
 })
 
 
