@@ -1,5 +1,6 @@
 import http, { IncomingMessage, Server, ServerResponse } from "http";
 import config from "./config";
+import { json } from "stream/consumers";
 
 const server: Server = http.createServer(
   (req: IncomingMessage, res: ServerResponse) => {
@@ -34,17 +35,30 @@ if (req.url=='/api' && req.method=="GET") {
 
 
 if (req.url=='/api/user' && req.method=="POST") {
-    const user ={
-        id:1,
-        name:"alice"
-    };
+    // const user ={
+    //     id:1,
+    //     name:"alice"
+    // };
 
 
 
-           res.writeHead(200, { "content-type": "application/json" });
-      res.end(
-        JSON.stringify(user)
-      );
+    //        res.writeHead(200, { "content-type": "application/json" });
+    //   res.end(
+    //     JSON.stringify(user)
+    //   );
+
+
+
+    let body='';
+    req.on('data',chunk=>{
+body+=chunk.toString();
+    });
+req.on("end",()=>{
+    const parsBody=JSON.parse(body);
+    console.log(body);
+    res.end(body)
+})
+
 
 }
 
