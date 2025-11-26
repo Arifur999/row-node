@@ -1,40 +1,76 @@
 import http, { IncomingMessage, Server, ServerResponse } from "http";
 import config from "./config";
 import { json } from "stream/consumers";
+import addRoutes, { RouteHandler, routes } from "./helpers/RouteHandler";
 
-const server: Server = http.createServer(
-  (req: IncomingMessage, res: ServerResponse) => {
-    console.log("start server......");
 
-//root rout
 
-    if (req.url == "/" && req.method == "GET") {
-      res.writeHead(200, { "content-type": "application/json" });
+
+addRoutes("GET","/",(req,res)=>{
+       res.writeHead(200, { "content-type": "application/json" });
       res.end(
         JSON.stringify({
           message: "hello from node js with typescript....",
           path: req.url,
         })
       );
-    }
 
+})
 
+const server: Server = http.createServer(
+  (req: IncomingMessage, res: ServerResponse) => {
+    console.log("start server......");
 
+    const method=req.method?.toUpperCase() || "";
+    const path=req.url || "";
+    const methodMap=routes.get(method);
+    const handler: RouteHandler | undefined=methodMap?.get(path)
 
-if (req.url=='/api' && req.method=="GET") {
-       res.writeHead(200, { "content-type": "application/json" });
-      res.end(
+// const methodMap=routes.get()
+
+if (handler) {
+    handler(req,res);
+}else{
+    res.writeHead(404,{"content-type":"application/json"});
+    res.end(
         JSON.stringify({
-          message: "typescript boom boom....",
-          path: req.url,
+            success:false,
+            message:"Route not found!!!",
+            path,
+
         })
-      );
-
-
+    )
 }
 
+//root rout
 
-if (req.url=='/api/user' && req.method=="POST") {
+    // if (req.url == "/" && req.method == "GET") {
+    //   res.writeHead(200, { "content-type": "application/json" });
+    //   res.end(
+    //     JSON.stringify({
+    //       message: "hello from node js with typescript....",
+    //       path: req.url,
+    //     })
+    //   );
+    // }
+
+
+
+
+// if (req.url=='/api' && req.method=="GET") {
+//        res.writeHead(200, { "content-type": "application/json" });
+//       res.end(
+//         JSON.stringify({
+//           message: "typescript boom boom....",
+//           path: req.url,
+//         })
+//       );
+
+
+// }
+
+
+// if (req.url=='/api/user' && req.method=="POST") {
     // const user ={
     //     id:1,
     //     name:"alice"
@@ -49,23 +85,23 @@ if (req.url=='/api/user' && req.method=="POST") {
 
 
 
-    let body='';
-    req.on('data',chunk=>{
-body+=chunk.toString();
-    });
-req.on("end",()=>{
-  try {
-      const parsBody=JSON.parse(body);
-    console.log(body);
-    res.end(body)
+    // let body='';
+//     req.on('data',chunk=>{
+// body+=chunk.toString();
+//     });
+// req.on("end",()=>{
+//   try {
+//       const parsBody=JSON.parse(body);
+//     console.log(body);
+//     res.end(body)
     
-  } catch (error:any) {
-    console.log(error?.message);
-  }
-})
+//   } catch (error:any) {
+//     console.log(error?.message);
+//   }
+// })
 
 
-}
+// }
 
 
 
