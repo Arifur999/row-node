@@ -8,3 +8,10 @@ addRoutes("GET","/",(req,res)=>{
         })
 
 })
+
+addRoutes("GET","/api",(req,res)=>{
+    sendJson(res,200,{
+          message: "typescript boom boom....",
+          path: req.url,
+        })
+})
